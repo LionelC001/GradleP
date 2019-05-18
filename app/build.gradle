@@ -1,0 +1,75 @@
+apply(plugin: 'com.android.application')
+
+
+println "123 + $project.name"
+android({
+    compileSdkVersion(28)
+
+    def versionPropsFiles = file("version.properties")
+    if (versionPropsFiles.canRead()) {
+        Properties versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFiles))
+
+        def runTasks = gradle.startParameter.taskNames
+        int verCode = versionProps.getProperty('VERSION_CODE').toInteger()
+        if (':app:assembleLionelType' in runTasks) {
+            versionProps.setProperty('VERSION_CODE', (verCode + 1).toString())
+            println "this is version CODE: " + versionProps.getProperty('VERSION_CODE')
+            versionProps.store(versionPropsFiles.newWriter(), null)
+        }
+
+        defaultConfig({
+            applicationId "com.lionel.gradlepractice"
+            minSdkVersion 15
+            targetSdkVersion 28
+            versionCode verCode
+            versionName "1.0"
+            testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        })
+
+    }
+
+    buildTypes({
+        debug {
+            resValue "string", "gradleContent", STR_CONTENT_DEBUG
+            resValue "string", "app_name", "GradlePractice(Debug)"
+        }
+
+        release({
+            minifyEnabled(false)
+            proguardFiles({
+                getDefaultProguardFile('proguard-android-optimize.txt')
+            }, 'proguard-rules.pro')
+            resValue "string", "app_name", "GradlePractice(Release)"
+        })
+
+        lionelType {
+            applicationIdSuffix ".lionel"
+            resValue "string", "app_name", "GradlePractice(LionelType)"
+        }
+    })
+
+
+    productFlavors {
+        flavor1 {
+            flavorDimensions "default"
+            resValue "string", "gradleContent", STR_CONTENT_FLAVOR1 + " abc"
+            applicationIdSuffix ".flavor1"
+        }
+
+        flavor2 {
+            flavorDimensions "default"
+            resValue "string", "gradleContent", STR_CONTENT_FLAVOR2 + " def"
+            applicationIdSuffix ".flavor2"
+        }
+    }
+})
+
+dependencies({
+    implementation(fileTree(dir: 'libs', include: ['*.jar']))
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+})
