@@ -31,11 +31,14 @@ android({
 
     buildTypes({
         debug {
+            applicationIdSuffix ".debug"
+            buildConfigField "String", "build_Type", "\"debug\""
             resValue "string", "gradleContent", STR_CONTENT_DEBUG
             resValue "string", "app_name", "GradlePractice(Debug)"
         }
 
         release({
+            buildConfigField "String", "build_Type", "\"release\""
             minifyEnabled(false)
             proguardFiles({
                 getDefaultProguardFile('proguard-android-optimize.txt')
@@ -45,6 +48,7 @@ android({
 
         lionelType {
             applicationIdSuffix ".lionel"
+            buildConfigField "String", "build_Type", "\"lionelType\""
             resValue "string", "app_name", "GradlePractice(LionelType)"
         }
     })
@@ -62,6 +66,10 @@ android({
             resValue "string", "gradleContent", STR_CONTENT_FLAVOR2 + " def"
             applicationIdSuffix ".flavor2"
         }
+    }
+
+    dataBinding {
+        enabled true
     }
 })
 
